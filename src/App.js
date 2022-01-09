@@ -3,15 +3,10 @@ import React, {useState, useEffect} from 'react';
 import Login from './components/Login/Login';
 import Home from './components/Home/Home';
 import MainHeader from './components/MainHeader/MainHeader';
+import AuthContext from './components/store/auth-context';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  //if this part is not write inside useEffect, it will cause a loop, every time that state is changed!!
-  // const storedLoginInformation = localStorage.getItem('isLoggedIn');
-  // if (storedLoginInformation.value==='LoggedIn'){
-  //   setIsLoggedIn(true);
-  // }
 
   useEffect(() => {
     const storedLoginInformation = localStorage.getItem('isLoggedIn');
@@ -32,13 +27,17 @@ function App() {
   };
 
   return (
-    <React.Fragment>
-      <MainHeader isAuthenticated={isLoggedIn} onLogout={logoutHandler}/>
+
+    <AuthContext.Provider value={{
+      isLoggedIn:isLoggedIn,
+      onLogout:logoutHandler}}>
+      <MainHeader onLogout={logoutHandler}/>
       <main>
         {!isLoggedIn && <Login onLogin={loginHandler}/>}
         {isLoggedIn && <Home onLogout={logoutHandler}/>}
       </main>
-    </React.Fragment>
+    </AuthContext.Provider>
+
   );
 }
 
